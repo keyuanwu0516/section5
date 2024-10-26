@@ -282,13 +282,19 @@ class CustomNavigator(BaseNavigator):
     def compute_trajectory_plan(self, state: TurtleBotState, goal: TurtleBotState, occupancy: StochOccupancyGrid2D, resolution: float, horizon: float = 10.0) -> TrajectoryPlan:
         """ Compute a trajectory plan using A* and cubic spline fitting """
 
+        # Define state space boundaries with a buffer around initial and goal positions
+        min_x = min(state.x, goal.x) - horizon
+        max_x = max(state.x, goal.x) + horizon
+        min_y = min(state.y, goal.y) - horizon
+        max_y = max(state.y, goal.y) + horizon
+
         astar = AStar(
-            statespace_lo=(0, 0),             # Convert to tuple
-            statespace_hi=(horizon, horizon), # Convert to tuple
-            x_init=(state.x, state.y),        # Explicit tuple conversion
-            x_goal=(goal.x, goal.y),          # Explicit tuple conversion
+            statespace_lo=(min_x, min_y),      # Adjusted lower bound
+            statespace_hi=(max_x, max_y),      # Adjusted upper bound
+            x_init=(state.x, state.y),
+            x_goal=(goal.x, goal.y),
             occupancy=occupancy,
-            resolution=0.1       
+            resolution=0.1
         )
 
         if not astar.solve() or len(astar.path) < 4:
