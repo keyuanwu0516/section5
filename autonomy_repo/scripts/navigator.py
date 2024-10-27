@@ -283,10 +283,10 @@ class CustomNavigator(BaseNavigator):
         """ Compute a trajectory plan using A* and cubic spline fitting """
 
         # Define state space boundaries with a buffer around initial and goal positions
-        min_x = min(state.x, goal.x) - horizon
-        max_x = max(state.x, goal.x) + horizon
-        min_y = min(state.y, goal.y) - horizon
-        max_y = max(state.y, goal.y) + horizon
+        min_x = state.x - horizon
+        max_x = state.x + horizon
+        min_y = state.y - horizon
+        max_y = state.y + horizon
 
         astar = AStar(
             statespace_lo=(min_x, min_y),      # Adjusted lower bound
